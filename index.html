@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Destiny World 3D - Bright Sunny Day</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene, Camera, Renderer
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB); // Bright sky blue
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(0, 5, 20);
+        camera.lookAt(0, 0, 0);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        
+        // BRIGHT LIGHTING - Sunny Day
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Bright ambient
+        scene.add(ambientLight);
+        
+        const sunLight = new THREE.DirectionalLight(0xffffee, 1.0);
+        sunLight.position.set(50, 50, 50);
+        scene.add(sunLight);
+        
+        // Ground - Green grass
+        const groundGeometry = new THREE.PlaneGeometry(100, 100);
+        const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x4CAF50 });
+        const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+        ground.rotation.x = -Math.PI / 2;
+        scene.add(ground);
+        
+        // Buildings - Colorful city
+        for (let i = 0; i < 20; i++) {
+            const height = Math.random() * 15 + 5;
+            const buildingGeometry = new THREE.BoxGeometry(4, height, 4);
+            const color = new THREE.Color().setHSL(Math.random(), 0.7, 0.6);
+            const buildingMaterial = new THREE.MeshStandardMaterial({ color });
+            const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+            
+            const angle = (i / 20) * Math.PI * 2;
+            const radius = 30;
+            building.position.set(
+                Math.cos(angle) * radius + (Math.random() - 0.5) * 10,
+                height / 2,
+                Math.sin(angle) * radius + (Math.random() - 0.5) * 10
+            );
+            scene.add(building);
+        }
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            camera.position.x = Math.sin(Date.now() * 0.0002) * 25;
+            camera.position.z = Math.cos(Date.now() * 0.0002) * 25;
+            camera.lookAt(0, 5, 0);
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        // Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
